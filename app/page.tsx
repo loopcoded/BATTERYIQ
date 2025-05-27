@@ -448,7 +448,7 @@ export default function BatteryTechProject() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                 BAATERYIQ
               </h1>
-              <p className="text-sm text-cyan-300/70">Neural Battery Analysis System</p>
+              <p className="text-sm text-cyan-300/70">Find Your Perfect Power Match</p>
             </div>
           </div>
         </div>
@@ -486,13 +486,12 @@ export default function BatteryTechProject() {
           </div>
 
           <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-            NEURAL BATTERY
+             BATTERYIQ
             <br />
-            OPTIMIZATION
+            Intelligent Battery Picks for Every Purpose.
           </h2>
           <p className="text-xl text-cyan-100/80 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Advanced AI-powered battery analysis system. Input your scenario parameters and receive quantum-computed
-            recommendations with precision molecular analysis.
+            Tell us your use case. We'll do the rest and guide you to the best battery for your exact scenario.
           </p>
         </div>
 
@@ -506,7 +505,7 @@ export default function BatteryTechProject() {
               SCENARIO ANALYSIS
             </CardTitle>
             <CardDescription className="text-cyan-300/70">
-              Describe your application requirements for quantum battery optimization
+              Describe your application requirements  battery optimization
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
@@ -722,6 +721,7 @@ export default function BatteryTechProject() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <p className="text-cyan-300/70">© 2025 BAATERYIQ - The Power Behind Smarter Choices</p>
+            <p className="text-cyan-300/70"> Powered by AI. Optimized for performance, reliability, and efficiency.</p>
           </div>
         </div>
       </footer>
