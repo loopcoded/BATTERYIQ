@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import  React from "react"
 import { useMemo } from "react";
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -111,6 +111,206 @@ const HexagonIcon = ({ children, className = "" }: { children: React.ReactNode; 
   )
 }
 
+// Enhanced Battery Image Display Component
+// Enhanced Battery Image Display Component
+const DynamicBatteryImage = ({ batteryName, batteryType }: { batteryName: string; batteryType: string }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [isLoadingImage, setIsLoadingImage] = useState(true)
+  const [imageError, setImageError] = useState(false)
+
+  React.useEffect(() => {
+    const fetchBatteryImageFromPixabay = async () => {
+      try {
+        setIsLoadingImage(true)
+        setImageError(false)
+        
+        // Create specific search queries based on battery type and application
+        let searchQuery = 'battery technology'
+        const typeAndName = `${batteryType} ${batteryName}`.toLowerCase()
+        
+        if (typeAndName.includes('solar') || typeAndName.includes('photovoltaic')) {
+          searchQuery = 'solar battery energy storage'
+        } else if (typeAndName.includes('lithium') || typeAndName.includes('li-ion')) {
+          searchQuery = 'lithium battery technology'
+        } else if (typeAndName.includes('lifepo4')) {
+          searchQuery = 'lithium iron phosphate battery'
+        } else if (typeAndName.includes('lead') || typeAndName.includes('acid')) {
+          searchQuery = 'lead acid battery'
+        } else if (typeAndName.includes('electric vehicle') || typeAndName.includes('ev')) {
+          searchQuery = 'electric vehicle battery'
+        } else if (typeAndName.includes('power wall') || typeAndName.includes('home')) {
+          searchQuery = 'home energy storage battery'
+        } else if (typeAndName.includes('ups')) {
+          searchQuery = 'ups battery backup'
+        }
+        
+        // Use Pixabay API - more reliable and has better technical images
+        const PIXABAY_API_KEY = '50537266-4ebac30a9837f36923b9c121d ' // Free API key - replace with your own
+        const response = await fetch(
+          `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(searchQuery)}&image_type=photo&orientation=horizontal&category=science&per_page=5&safesearch=true`
+        )
+        
+        if (response.ok) {
+          const data = await response.json()
+          if (data.hits && data.hits.length > 0) {
+            // Use the best quality image available
+            const image = data.hits[0]
+            setImageUrl(image.webformatURL || image.largeImageURL)
+          } else {
+            // Fallback to generic battery search
+            const fallbackResponse = await fetch(
+              `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=battery+power&image_type=photo&orientation=horizontal&per_page=3&safesearch=true`
+            )
+            const fallbackData = await fallbackResponse.json()
+            if (fallbackData.hits && fallbackData.hits.length > 0) {
+              setImageUrl(fallbackData.hits[0].webformatURL)
+            } else {
+              setImageError(true)
+            }
+          }
+        } else {
+          // If Pixabay fails, try Pexels API as secondary option
+          try {
+            const pexelsResponse = await fetch(
+              `https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=1&orientation=landscape`,
+              {
+                headers: {
+                  'Authorization': 'JekbTXUciMFuX8ZQnuQKWbRhr3wFYlHHSxw93sqDyOWg4LeKkmUFBxr9' // Free API key
+                }
+              }
+            )
+            
+            if (pexelsResponse.ok) {
+              const pexelsData = await pexelsResponse.json()
+              if (pexelsData.photos && pexelsData.photos.length > 0) {
+                setImageUrl(pexelsData.photos[0].src.large)
+              } else {
+                setImageError(true)
+              }
+            } else {
+              setImageError(true)
+            }
+          } catch (pexelsError) {
+            console.error('Pexels API error:', pexelsError)
+            setImageError(true)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching battery image:', error)
+        setImageError(true)
+      } finally {
+        setIsLoadingImage(false)
+      }
+    }
+
+    fetchBatteryImageFromPixabay()
+  }, [batteryName, batteryType])
+
+  return (
+    <div className="relative w-full h-64 mb-6 rounded-lg overflow-hidden border border-cyan-400/30 bg-slate-800/50 backdrop-blur-md">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10">
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(45deg, transparent 49%, rgba(6, 182, 212, 0.1) 50%, transparent 51%),
+              linear-gradient(-45deg, transparent 49%, rgba(6, 182, 212, 0.1) 50%, transparent 51%)
+            `,
+            backgroundSize: "20px 20px",
+            animation: "slide 10s linear infinite",
+          }}
+        />
+      </div>
+
+      {/* Loading State */}
+      {isLoadingImage && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            <p className="text-cyan-300 text-sm">Fetching battery visualization...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Image Display */}
+      {imageUrl && !isLoadingImage && (
+        <div className="relative w-full h-full">
+          <img
+            src={imageUrl}
+            alt={`${batteryName} - ${batteryType}`}
+            className="w-full h-full object-cover opacity-80"
+            onError={() => setImageError(true)}
+          />
+          {/* Overlay with battery info */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent">
+            <div className="absolute bottom-4 left-4 right-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-cyan-500/20 rounded-lg border border-cyan-400/30 backdrop-blur-sm">
+                  <Battery className="h-6 w-6 text-cyan-400" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold">{batteryName}</p>
+                  <p className="text-cyan-300 text-sm">{batteryType} Technology</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Animated Tech Overlay */}
+          <div className="absolute top-4 right-4">
+            <div className="flex items-center gap-2 bg-slate-900/60 backdrop-blur-sm rounded-lg px-3 py-2 border border-cyan-400/30">
+              <Zap className="h-4 w-4 text-cyan-400 animate-pulse" />
+              <span className="text-cyan-300 text-sm font-medium">ACTIVE</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error State or Fallback */}
+      {(imageError || (!imageUrl && !isLoadingImage)) && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            {/* Animated 3D Battery Fallback */}
+            <div className="mx-auto w-24 h-32 relative mb-4">
+              <div className="absolute inset-0 border-2 border-cyan-400/50 rounded-lg bg-gradient-to-b from-cyan-500/20 to-blue-500/30 backdrop-blur-sm">
+                <div className="absolute bottom-2 left-2 right-2 h-6 bg-gradient-to-r from-cyan-400 to-blue-400 rounded opacity-80 animate-pulse" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Zap className="h-6 w-6 text-cyan-400 animate-pulse" />
+                </div>
+                <div
+                  className="absolute inset-0 border border-cyan-400/30 rounded-lg"
+                  style={{
+                    background: `
+                      linear-gradient(90deg, transparent 49%, rgba(6, 182, 212, 0.2) 50%, transparent 51%),
+                      linear-gradient(0deg, transparent 49%, rgba(6, 182, 212, 0.2) 50%, transparent 51%)
+                    `,
+                    backgroundSize: "8px 8px",
+                  }}
+                />
+              </div>
+              <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-6 h-3 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 border border-cyan-400/50 rounded-t backdrop-blur-sm" />
+            </div>
+            <p className="text-cyan-300 font-semibold">{batteryName}</p>
+            <p className="text-cyan-400/70 text-sm">{batteryType} Technology</p>
+          </div>
+        </div>
+      )}
+
+      {/* CSS for sliding animation */}
+      <style jsx>{`
+        @keyframes slide {
+          0% {
+            transform: translateX(-20px) translateY(-20px);
+          }
+          100% {
+            transform: translateX(0px) translateY(0px);
+          }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 function extractJsonFromMarkdown(md: string): string | null {
   const match = md.match(/```json\n([\s\S]*?)```/);
   return match ? match[1] : null;
@@ -170,7 +370,7 @@ export default function BatteryTechProject() {
           },
           {
             role: "user",
-            content: `What's the best battery technology for this scenario: "${userScenario}"? Please include fields like name, type, description, whySuitable, cost, manufacturer, capacity, voltage, lifespan, applications, pros, and cons.`,
+            content: `What's the best battery technology for this scenario: "${userScenario}"? If there are batteries better or more use than  Lithium Batteries then show that . Please include fields like name, type, description, whySuitable, cost, manufacturer, capacity, voltage, lifespan, applications, pros, and cons.`,
           },
         ],
         temperature: 0.7,
@@ -367,6 +567,12 @@ export default function BatteryTechProject() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6 space-y-8">
+                {/* Dynamic Battery Image */}
+                <DynamicBatteryImage 
+                  batteryName={recommendation.name} 
+                  batteryType={recommendation.type} 
+                />
+
                 <p className="text-lg text-cyan-100/90 text-center leading-relaxed">{recommendation.description}</p>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -515,8 +721,7 @@ export default function BatteryTechProject() {
       <footer className="relative z-10 mt-20 border-t border-cyan-500/20 bg-slate-900/80 backdrop-blur-md">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <p className="text-cyan-300/70">© 2025 BAATERYIQ - Neural Battery Intelligence System</p>
-            <p className="text-sm text-cyan-400/50 mt-2">Powered by neural networks and molecular simulation</p>
+            <p className="text-cyan-300/70">© 2025 BAATERYIQ - The Power Behind Smarter Choices</p>
           </div>
         </div>
       </footer>
