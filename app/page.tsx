@@ -370,7 +370,7 @@ export default function BatteryTechProject() {
           },
           {
             role: "user",
-            content: `What's the best battery technology for this scenario: "${userScenario}"? If there are batteries better or more use than  Lithium Batteries then show that . Please include fields like name, type, description, whySuitable, cost, manufacturer, capacity, voltage, lifespan, applications, pros, and cons.`,
+            content: `What's the best battery technology for this scenario: "${userScenario}"? Please include fields like name, type, description, whySuitable, cost, manufacturer, capacity, voltage, lifespan, applications, pros, and cons.`,
           },
         ],
         temperature: 0.7,
