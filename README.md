@@ -20,8 +20,7 @@
 
 - **Frontend**: React, TypeScript, Tailwind CSS
 - **Backend (API)**: GroqCloud Chat Completion API
-- **Design Tools**: V0.dev, Figma (optional)
-- **Hosting**: (add hosting platform, e.g., Vercel/Netlify if used)
+- **Hosting**: Vercel
 
 ## 📸 Preview
 ![image](https://github.com/user-attachments/assets/55b2bcfa-a7f8-4221-9daa-eb9fa376be55)
